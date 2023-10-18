@@ -11,7 +11,7 @@ class CancelReservationDialog : public QDialog {
     Q_OBJECT
 
 public:
-    CancelReservationDialog(QWidget *parent = nullptr);
+    CancelReservationDialog(QWidget *parent = nullptr,const QString& username = "u");
 
 private:
     QTableWidget *reservationTable; // Tableau pour afficher les réservations
@@ -19,6 +19,7 @@ private:
     void setupUI();
     void loadReservations();
     void deleteReservation(int row);
+    QString username;
 
 private slots:
     void onDeleteButtonClicked();

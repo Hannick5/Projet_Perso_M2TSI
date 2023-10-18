@@ -3,8 +3,8 @@
 
 
 
-CancelReservationDialog::CancelReservationDialog(QWidget *parent)
-    : QDialog(parent) {
+CancelReservationDialog::CancelReservationDialog(QWidget *parent, const QString& username)
+    : QDialog(parent), username(username) {
     setupUI();
     loadReservations();
 }
@@ -25,7 +25,9 @@ void CancelReservationDialog::setupUI() {
 
 void CancelReservationDialog::loadReservations() {
     QSqlQuery query;
-    if (query.exec("SELECT nom_utilisateur, nom_spectacle, num_place FROM Spectateur")) {
+    query.prepare("SELECT nom_utilisateur, nom_spectacle, num_place FROM Spectateur WHERE nom_utilisateur = ?");
+    query.bindValue(0, username);
+    if (query.exec()) {
         while (query.next()) {
             QString nom_utilisateur = query.value(0).toString();
             QString nom_spectacle = query.value(1).toString();

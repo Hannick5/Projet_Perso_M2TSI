@@ -63,7 +63,7 @@ void PageBillet::onBuyTicketsClicked()
 
 void PageBillet::onCancelTicketClicked() {
     // Créez une instance de la fenêtre d'annulation de billet (CancelReservationDialog)
-    CancelReservationDialog cancelDialog(this);
+    CancelReservationDialog cancelDialog(this, username);
     cancelDialog.exec();
 }
 
