@@ -11,7 +11,7 @@ public:
     Database(const QString& dbName);
     ~Database();
 
-    bool addUser(const QString& username, bool isAdmin);
+    bool addUser(const QString& username, const QString& password);
     QList<QPair<int, QString>> listUsers();
     bool userExists(const QString& username, const QString& password);
     bool isUserAdmin(const QString& username);

@@ -4,7 +4,6 @@
 #include "ticketdialog.h" // La boîte de dialogue pour l'achat de billets
 #include "database.h"
 
-
 PageBillet::PageBillet(const QString& username, QWidget *parent)
     : QDialog(parent), username(username)
 {
@@ -48,7 +47,7 @@ void PageBillet::setupUI()
 
     connect(cancelTicketButton, &QPushButton::clicked, this, &PageBillet::onCancelTicketClicked);
 
-
+    connect(logoutButton, SIGNAL(clicked()), this, SLOT(close()));
 }
 
 void PageBillet::onBuyTicketsClicked()

@@ -24,11 +24,12 @@ Database::~Database() {
     db.close();
 }
 
-bool Database::addUser(const QString& username, bool isAdmin) {
+bool Database::addUser(const QString& username, const QString& password) {
     QSqlQuery query;
-    query.prepare("INSERT INTO Utilisateurs (Nom, Admin) VALUES (?, ?)");
+    query.prepare("INSERT INTO Utilisateurs (Nom, Admin, MotDePasse) VALUES (?, 0, ?)");
     query.bindValue(0, username);
-    query.bindValue(1, isAdmin);
+    query.bindValue(1, hashPassword(password));
+
     return query.exec();
 }
 

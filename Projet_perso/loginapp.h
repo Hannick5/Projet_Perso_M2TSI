@@ -14,11 +14,12 @@ class LoginApp : public QWidget {
 public:
     LoginApp(QWidget *parent = nullptr);
     void handleLogin();
-private:
+    void handleInscription();
     QLineEdit editUsername;
     QLineEdit editPassword;
     QPushButton buttonLogin;
     QStackedWidget stackedWidget;
+    QPushButton buttonSignUp;
 };
 
 #endif // LOGINAPP_H

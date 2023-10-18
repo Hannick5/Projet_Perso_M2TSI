@@ -12,6 +12,7 @@ SOURCES += \
     adminpagebillet.cpp \
     cancelticketdialog.cpp \
     database.cpp \
+    inscriptiondialog.cpp \
     loginapp.cpp \
     main.cpp \
     pagebillet.cpp \
@@ -21,6 +22,7 @@ HEADERS += \
     adminpagebillet.h \
     cancelticketdialog.h \
     database.h \
+    inscriptiondialog.h \
     loginapp.h \
     pagebillet.h \
     ticketdialog.h
