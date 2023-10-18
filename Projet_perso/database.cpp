@@ -1,7 +1,7 @@
 #include "database.h"
 
 Database::Database(){
-    // Configuration de la base de données SQLite
+    // Configuration de la base de données SQLite sans argument
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName("ProjetBillet.db");
 
@@ -11,7 +11,7 @@ Database::Database(){
 }
 
 Database::Database(const QString& dbName) {
-    // Configuration de la base de données SQLite
+    // Configuration de la base de données SQLite avec argument
     db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbName);
 
@@ -82,23 +82,21 @@ QString Database::hashPassword(const QString &password) {
 bool Database::deleteReservation(const QString& nom_utilisateur, const QString& nom_spectacle, int num_place) {
     // Ouvrir la base de données
     if (!db.isOpen()) {
-        // Gérez l'ouverture de la base de données ici
         return false;
     }
 
-    // Préparez la requête de suppression
+    // Préparer la requête de suppression
     QSqlQuery query(db);
     query.prepare("DELETE FROM Spectateur WHERE nom_utilisateur = :nom_utilisateur AND nom_spectacle = :nom_spectacle AND num_place = :num_place");
     query.bindValue(":nom_utilisateur", nom_utilisateur);
     query.bindValue(":nom_spectacle", nom_spectacle);
     query.bindValue(":num_place", num_place);
 
-    // Exécutez la requête de suppression
+    // Exécuter la requête de suppression
     if (query.exec()) {
         // La suppression s'est bien passée
         return true;
     } else {
-        // Gérez l'erreur de suppression ici
         return false;
     }
 }

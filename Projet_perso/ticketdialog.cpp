@@ -6,7 +6,7 @@
 TicketDialog::TicketDialog(const QString& selectedShow, const QString& username, QWidget *parent)
     : QDialog(parent), username(username), selectedShow(selectedShow)
 {
-    totalSeats = 100; // Nombre total de places (ajustez-le selon vos besoins)
+    totalSeats = 100; // Nombre total de places
     setupUI(selectedShow);
 }
 
@@ -15,11 +15,10 @@ void TicketDialog::setupUI(const QString& selectedShow)
     setWindowTitle("Achat de billets pour " + selectedShow);
     QVBoxLayout *mainLayout = new QVBoxLayout(this);
 
-    // Créez un conteneur pour représenter la salle de spectacle
+    // Conteneur pour représenter la salle de spectacle
     QFrame *stage = new QFrame(this);
     stage->setStyleSheet("background-color: #2c3e50;");
 
-    // Ajoutez un layout de grille pour les sièges
     QGridLayout *seatingLayout = new QGridLayout(stage);
     seatingLayout->setSpacing(20); // Espacement entre les sièges
 
@@ -62,7 +61,7 @@ void TicketDialog::onSeatClicked(int seatNumber)
         seatButton->setStyleSheet("background-color: #00FF00;"); // Couleur de sélection
         selectedSeats.append(seatNumber);
     } else {
-        // Si la couleur est différente, rétablissez-la à la couleur normale
+        // Si la couleur est différente, rétablis à la couleur normale
         seatButton->setStyleSheet("background-color: #E0E0E0;"); // Couleur normale
         selectedSeats.remove(seatNumber);
     }
@@ -80,9 +79,8 @@ void TicketDialog::onConfirm(){
         qDebug() << "Siège sélectionné : " << seat << username << selectedShow;
         query.bindValue(":seat", seat);
 
-        // Exécutez l'insertion pour chaque siège
+        // Insertion pour chaque siège
         if (!query.exec()) {
-            // Gérez les erreurs d'insertion ici si nécessaire
             qDebug() << "Erreur d'insertion pour le siège : " << seat << query.lastError().text();
         }
     }

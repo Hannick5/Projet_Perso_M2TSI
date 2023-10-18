@@ -1,7 +1,7 @@
 // pagebillet.cpp
 #include "pagebillet.h"
 #include "cancelticketdialog.h"
-#include "ticketdialog.h" // La boîte de dialogue pour l'achat de billets
+#include "ticketdialog.h"
 #include "database.h"
 
 PageBillet::PageBillet(const QString& username, QWidget *parent)
@@ -13,8 +13,10 @@ PageBillet::PageBillet(const QString& username, QWidget *parent)
 
 void PageBillet::setupUI()
 {
+
+
     setWindowTitle("Page de Billet");
-    setFixedSize(400, 300);  // Définir la taille de la fenêtre (ajustez-la selon vos besoins)
+    setFixedSize(400, 300);  // Définir la taille de la fenêtre
 
     layout = new QVBoxLayout(this);
 
@@ -26,13 +28,10 @@ void PageBillet::setupUI()
     showSelection = new QComboBox;
 
     buyTicketsButton = new QPushButton("Acheter des billets");
-    buyTicketsButton->setStyleSheet("background-color: #007ACC; color: white; font-weight: bold;");
 
     cancelTicketButton = new QPushButton("Annuler des billets");
-    cancelTicketButton->setStyleSheet("background-color: #007ACC; color: white; font-weight: bold;");
 
     logoutButton = new QPushButton("Se Déconnecter");
-    logoutButton->setStyleSheet("background-color: #FF5733; color: white; font-weight: bold;");
 
     layout->addWidget(titleLabel);
     layout->addWidget(showLabel);
@@ -40,6 +39,44 @@ void PageBillet::setupUI()
     layout->addWidget(buyTicketsButton);
     layout->addWidget(cancelTicketButton);
     layout->addWidget(logoutButton);
+
+    QString styleSheet = "QLabel {"
+                         "font-size: 14px;"
+                         "color: #333333;"
+                         "}"
+                         "QComboBox {"
+                         "border: 1px solid #aaaaaa;"
+                         "border-radius: 5px;"
+                         "padding: 2px;"
+                         "font-size: 14px;"
+                         "}"
+                         "QPushButton {"
+                         "background-color: #3498db;"
+                         "color: white;"
+                         "border: none;"
+                         "padding: 5px 10px;"
+                         "border-radius: 5px;"
+                         "font-size: 14px;"
+                         "}"
+                         "QPushButton:hover {"
+                         "background-color: #2980b9;"
+                         "}";
+
+    showLabel->setStyleSheet(styleSheet);
+    showSelection->setStyleSheet(styleSheet);
+    buyTicketsButton->setStyleSheet(styleSheet);
+    cancelTicketButton->setStyleSheet(styleSheet);
+    logoutButton->setStyleSheet("QPushButton {"
+                                "background-color: #FF4C4C;"
+                                "color: white;"
+                                "border: none;"
+                                "padding: 5px 10px;"
+                                "border-radius: 5px;"
+                                "font-size: 14px;"
+                                "}"
+                                "QPushButton:hover {"
+                                "background-color: #cc3c3c;"
+                                "}");
 
     connect(buyTicketsButton, &QPushButton::clicked, this, &PageBillet::onBuyTicketsClicked);
 
@@ -52,25 +89,25 @@ void PageBillet::setupUI()
 
 void PageBillet::onBuyTicketsClicked()
 {
-    // Récupérez le spectacle sélectionné (showSelection->currentText()) pour afficher la grille correspondante
+    // Récupérer le spectacle sélectionné pour afficher la grille correspondante
     selectedShow = showSelection->currentText();
 
-    // Affichez la boîte de dialogue pour l'achat de billets
+    // Afficher la boîte de dialogue pour l'achat de billets
     TicketDialog ticketDialog(selectedShow, username, this);
     ticketDialog.exec();
 }
 
 void PageBillet::onCancelTicketClicked() {
-    // Créez une instance de la fenêtre d'annulation de billet (CancelReservationDialog)
+    // Créer une instance de la fenêtre d'annulation de billet (CancelReservationDialog)
     CancelReservationDialog cancelDialog(this, username);
     cancelDialog.exec();
 }
 
 void PageBillet::populateShowSelection()
 {
-    Database db; // Créez une instance de votre classe Database
+    Database db;
 
-    // Effectuez une requête pour obtenir les noms des spectacles depuis la base de données
+    // Requête pour obtenir les noms des spectacles depuis la base de données
     QSqlQuery query;
 
     if (query.exec("SELECT titre, date FROM spectacles")) {
@@ -78,7 +115,7 @@ void PageBillet::populateShowSelection()
             QString showTitle = query.value(0).toString();
             QDateTime showDate = query.value(1).toDateTime();
 
-            // Vérifiez si la date du spectacle est dépassée
+            // Vérifier si la date du spectacle est dépassée
             if (showDate < QDateTime::currentDateTime()) {
                 showSelection->addItem(showTitle, QVariant(true));
             } else {
@@ -90,23 +127,33 @@ void PageBillet::populateShowSelection()
 
 void PageBillet::onShowSelected(int index)
 {
-    Database db; // Créez une instance de votre classe Database
+    Database db;
 
 
-    // Affichez les informations du spectacle sélectionné dans le QLabel showInfoLabel
+    // Afficher les informations du spectacle sélectionné dans le label
     QString selectedShow = showSelection->itemText(index);
     QVariant isShowExpired = showSelection->itemData(index);
 
     if (isShowExpired.toBool()) {
         // Spectacle dépassé
         buyTicketsButton->setEnabled(false);
-        buyTicketsButton->setStyleSheet("background-color: gray;"); // Fond gris
+        buyTicketsButton->setStyleSheet("background-color: gray;color: white;border: none;padding: 5px 10px;border-radius: 5px;font-size: 14px;"); // Fond gris
     } else {
         buyTicketsButton->setEnabled(true);
-        buyTicketsButton->setStyleSheet("background-color: #007ACC; color: white; font-weight: bold;"); // Fond normal
+        buyTicketsButton->setStyleSheet("QPushButton {"
+                                        "background-color: #3498db;"
+                                        "color: white;"
+                                        "border: none;"
+                                        "padding: 5px 10px;"
+                                        "border-radius: 5px;"
+                                        "font-size: 14px;"
+                                        "}"
+                                        "QPushButton:hover {"
+                                        "background-color: #2980b9;"
+                                        "}"); // Fond normal
     }
 
-    // Effectuez une requête pour obtenir les informations du spectacle depuis la base de données
+    // Requête pour obtenir les informations du spectacle depuis la base de données
     QSqlQuery query;
     query.prepare("SELECT description, artiste, prix, date, heure FROM spectacles WHERE titre = :titre");
     query.bindValue(":titre", selectedShow);

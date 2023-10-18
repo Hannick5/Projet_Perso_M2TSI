@@ -18,6 +18,35 @@ LoginApp::LoginApp(QWidget *parent)
     // Configuration de l'interface utilisateur
     setWindowTitle("Interface de Connexion");
 
+    QString styleSheet = "QLabel {"
+                         "font-size: 14px;"
+                         "color: #333333;"
+                         "}"
+                         "QLineEdit {"
+                         "border: 1px solid #aaaaaa;"
+                         "border-radius: 5px;"
+                         "padding: 2px;"
+                         "font-size: 14px;"
+                         "}"
+                         "QPushButton {"
+                         "background-color: #3498db;"
+                         "color: white;"
+                         "border: none;"
+                         "padding: 5px 10px;"
+                         "border-radius: 5px;"
+                         "font-size: 14px;"
+                         "}"
+                         "QPushButton:hover {"
+                         "background-color: #2980b9;"
+                         "}";
+
+    editUsername.setStyleSheet(styleSheet);
+    editPassword.setStyleSheet(styleSheet);
+    buttonLogin.setStyleSheet(styleSheet);
+    buttonSignUp.setStyleSheet(styleSheet);
+
+    setFixedSize(500,250);
+
     QVBoxLayout *layout = new QVBoxLayout(this);  // Création d'une mise en page
 
     QLabel *labelUsername = new QLabel("Identifiant :");  // Création des labels
@@ -79,13 +108,12 @@ void LoginApp::handleLogin() {
 void LoginApp::handleInscription() {
     InscriptionDialog inscriptionDialog;
     if (inscriptionDialog.exec() == QDialog::Accepted) {
-        // L'utilisateur a confirmé l'inscription, vous pouvez maintenant récupérer les informations
+        // L'utilisateur a confirmé l'inscription
         QString username = inscriptionDialog.getUsername();
         QString password = inscriptionDialog.getPassword();
 
         Database db;
 
-        // Exemple (supposons que vous avez une instance de Database appelée db) :
         if (db.addUser(username, password)) {
             QMessageBox::information(this, "Inscription réussie", "Votre inscription a été enregistrée.");
         } else {

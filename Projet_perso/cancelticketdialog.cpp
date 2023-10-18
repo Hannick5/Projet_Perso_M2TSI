@@ -5,6 +5,7 @@
 
 CancelReservationDialog::CancelReservationDialog(QWidget *parent, const QString& username)
     : QDialog(parent), username(username) {
+    setFixedSize(800, 600);
     setupUI();
     loadReservations();
 }
@@ -55,8 +56,6 @@ void CancelReservationDialog::deleteReservation(int row) {
 
         if (db.deleteReservation(nom_utilisateur, nom_spectacle, num_place)) {
             reservationTable->removeRow(row);
-        } else {
-            // Gérer l'erreur de suppression ici
         }
     }
 }
