@@ -72,10 +72,18 @@ void PageBillet::populateShowSelection()
 
     // Effectuez une requête pour obtenir les noms des spectacles depuis la base de données
     QSqlQuery query;
-    if (query.exec("SELECT titre FROM spectacles")) {
+
+    if (query.exec("SELECT titre, date FROM spectacles")) {
         while (query.next()) {
             QString showTitle = query.value(0).toString();
-            showSelection->addItem(showTitle);
+            QDateTime showDate = query.value(1).toDateTime();
+
+            // Vérifiez si la date du spectacle est dépassée
+            if (showDate < QDateTime::currentDateTime()) {
+                showSelection->addItem(showTitle, QVariant(true));
+            } else {
+                showSelection->addItem(showTitle, QVariant(false));
+            }
         }
     }
 }
@@ -87,16 +95,28 @@ void PageBillet::onShowSelected(int index)
 
     // Affichez les informations du spectacle sélectionné dans le QLabel showInfoLabel
     QString selectedShow = showSelection->itemText(index);
+    QVariant isShowExpired = showSelection->itemData(index);
+
+    if (isShowExpired.toBool()) {
+        // Spectacle dépassé
+        buyTicketsButton->setEnabled(false);
+        buyTicketsButton->setStyleSheet("background-color: gray;"); // Fond gris
+    } else {
+        buyTicketsButton->setEnabled(true);
+        buyTicketsButton->setStyleSheet("background-color: #007ACC; color: white; font-weight: bold;"); // Fond normal
+    }
 
     // Effectuez une requête pour obtenir les informations du spectacle depuis la base de données
     QSqlQuery query;
-    query.prepare("SELECT description, artiste, prix FROM spectacles WHERE titre = :titre");
+    query.prepare("SELECT description, artiste, prix, date, heure FROM spectacles WHERE titre = :titre");
     query.bindValue(":titre", selectedShow);
     if (query.exec() && query.next()) {
         QString description = query.value(0).toString();
         QString artiste = query.value(1).toString();
         QString prix = query.value(2).toString();
-        QString infoText = QString("Description : %1\nArtiste : %2\nPrix : %3").arg(description, artiste, prix);
+        QString date = query.value(3).toString();
+        QString heure = query.value(4).toString();
+        QString infoText = QString("Description : %1\nArtiste : %2\nPrix : %3\nDate : %4\nHeure : %5").arg(description, artiste, prix, date, heure);
         showLabel->setText(infoText);
 
     }
