@@ -22,6 +22,7 @@ private:
     QString username;
     QString selectedShow;
     void setupUI(const QString& selectedShow);
+    int isCovid;
 private slots:
     void onSeatClicked(int seatNumber);
     void onConfirm();

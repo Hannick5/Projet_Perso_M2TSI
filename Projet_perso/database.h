@@ -17,6 +17,7 @@ public:
     bool isUserAdmin(const QString& username);
     QString hashPassword(const QString &password);
     bool deleteReservation(const QString& nom_utilisateur, const QString& nom_spectacle, int num_place);
+    int getIsCovidValue(const QString &spectacleName);
 private:
     QSqlDatabase db;
 };

@@ -25,47 +25,97 @@ void TicketDialog::setupUI(const QString& selectedShow)
     const int totalRows = 10; // Nombre total de rangées
     const int seatsPerRow = 10; // Nombre de sièges par rangée
 
+    Database db;
+    int isCovid = db.getIsCovidValue(selectedShow); // la valeur isCovid du spectacle
+
     for (int row = 0; row < totalRows; ++row) {
         for (int seat = 0; seat < seatsPerRow; ++seat) {
             int seatNumber = row * seatsPerRow + seat + 1;
             QPushButton *seatButton = new QPushButton(QString::number(seatNumber));
             seatButton->setFixedSize(40, 40); // Taille de chaque bouton de place
-            seatButton->setStyleSheet("background-color: #E0E0E0;"); // Style de place non disponible
+
+            // Vérifier si le siège est cliquable en fonction de la valeur isCovid
+            bool isClickable = (isCovid == 0) || (isCovid == 1 && seatNumber % 2 == 0);
+
+            if (isClickable) {
+                seatButton->setStyleSheet("QPushButton {"
+                                          "background-color: #3498db;"
+                                          "color: white;"
+                                          "border: none;"
+                                          "padding: 5px 10px;"
+                                          "border-radius: 5px;"
+                                          "font-size: 14px;"
+                                          "}"
+                                          "QPushButton:hover {"
+                                          "background-color: #2980b9;"
+                                          "}");
+                connect(seatButton, &QPushButton::clicked, this, [seatNumber, this]() {
+                    onSeatClicked(seatNumber);
+                });
+            } else {
+                seatButton->setStyleSheet("QPushButton {"
+                                          "background-color: #CCCCCC;"
+                                          "color: white;"
+                                          "border: none;"
+                                          "padding: 5px 10px;"
+                                          "border-radius: 5px;"
+                                          "font-size: 14px;"
+                                          "}"
+                                          ); // Grisé
+            }
+
             seatButtons.push_back(seatButton);
             seatingLayout->addWidget(seatButton, row, seat);
-            connect(seatButton, &QPushButton::clicked, this, [seatNumber, this]() {
-                onSeatClicked(seatNumber);
-            });
         }
     }
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
 
     QPushButton *confirmButton = new QPushButton("Confirmer");
-
     confirmButton->setStyleSheet("background-color: #E0E0E0;");
-
     bottomLayout->addWidget(confirmButton);
 
-    seatingLayout->addLayout(bottomLayout,seatingLayout->rowCount(), 0, 1, seatingLayout->columnCount());
+    seatingLayout->addLayout(bottomLayout, seatingLayout->rowCount(), 0, 1, seatingLayout->columnCount());
     connect(confirmButton, &QPushButton::clicked, this, &TicketDialog::onConfirm);
 
     mainLayout->addWidget(stage);
 }
 
+
 void TicketDialog::onSeatClicked(int seatNumber)
 {
     QPushButton *seatButton = seatButtons[seatNumber - 1]; // -1 car les indices commencent à 0
 
-    if (seatButton->palette().button().color() == QColor(224, 224, 224)) {
-        seatButton->setStyleSheet("background-color: #00FF00;"); // Couleur de sélection
-        selectedSeats.append(seatNumber);
+    if (selectedSeats.contains(seatNumber)) {
+        // Si le siège est déjà sélectionné, désélectionnez-le
+        selectedSeats.removeOne(seatNumber); // Utilisez removeOne pour supprimer l'élément s'il existe
+        seatButton->setStyleSheet("QPushButton {"
+                                  "background-color: #3498db;"
+                                  "color: white;"
+                                  "border: none;"
+                                  "padding: 5px 10px;"
+                                  "border-radius: 5px;"
+                                  "font-size: 14px;"
+                                  "}"
+                                  "QPushButton:hover {"
+                                  "background-color: #2980b9;"
+                                  "}"); // Style par défaut
     } else {
-        // Si la couleur est différente, rétablis à la couleur normale
-        seatButton->setStyleSheet("background-color: #E0E0E0;"); // Couleur normale
-        selectedSeats.remove(seatNumber);
+        // Si le siège n'est pas encore sélectionné, sélectionnez-le
+        selectedSeats.append(seatNumber);
+        seatButton->setStyleSheet("QPushButton {"
+                                  "background-color: #aea4eb;"
+                                  "color: white;"
+                                  "border: none;"
+                                  "padding: 5px 10px;"
+                                  "border-radius: 5px;"
+                                  "font-size: 14px;"
+                                  "}"
+                                  ); // Couleur de sélection
     }
 }
+
+
 
 
 void TicketDialog::onConfirm(){

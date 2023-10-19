@@ -100,3 +100,16 @@ bool Database::deleteReservation(const QString& nom_utilisateur, const QString& 
         return false;
     }
 }
+
+int Database::getIsCovidValue(const QString &spectacleName) {
+    QSqlQuery query;
+    query.prepare("SELECT covid FROM spectacles WHERE titre = :spectacleName");
+    query.bindValue(":spectacleName", spectacleName);
+
+    if (query.exec() && query.next()) {
+        return query.value(0).toInt();
+    }
+
+    // En cas d'erreur, vous pouvez renvoyer une valeur par défaut (par exemple, -1) pour indiquer qu'aucune information n'a été trouvée.
+    return -1;
+}
