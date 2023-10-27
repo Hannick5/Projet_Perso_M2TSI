@@ -2,21 +2,26 @@
 #define ADMINPAGEBILLET_H
 
 #include <QDialog>
-
-namespace Ui {
-class AdminPageBillet;
-}
+#include <QTabWidget>
 
 class AdminPageBillet : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit AdminPageBillet(QWidget *parent = nullptr);
+    AdminPageBillet(QWidget *parent = nullptr);
     ~AdminPageBillet();
 
 private:
-    Ui::AdminPageBillet *ui;
+    void setupUI();
+    void setupShowsTab();
+    void setupReservationsTab();
+
+
+    // Widgets pour les onglets
+    QTabWidget *tabWidget;
+    QWidget *showsTab;
+    QWidget *reservationsTab;
 };
 
 #endif // ADMINPAGEBILLET_H
