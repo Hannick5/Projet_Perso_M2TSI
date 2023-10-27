@@ -28,31 +28,19 @@ void TicketDialog::setupUI(const QString& selectedShow)
     Database db;
     int isCovid = db.getIsCovidValue(selectedShow); // la valeur isCovid du spectacle
 
+    // Obtenir la liste des sièges déjà achetés pour le spectacle
+    QList<int> alreadyPurchasedSeats = db.getAlreadyPurchasedSeats(selectedShow);
+
     for (int row = 0; row < totalRows; ++row) {
         for (int seat = 0; seat < seatsPerRow; ++seat) {
             int seatNumber = row * seatsPerRow + seat + 1;
             QPushButton *seatButton = new QPushButton(QString::number(seatNumber));
             seatButton->setFixedSize(40, 40); // Taille de chaque bouton de place
 
-            // Vérifier si le siège est cliquable en fonction de la valeur isCovid
-            bool isClickable = (isCovid == 0) || (isCovid == 1 && seatNumber % 2 == 0);
+            // Vérifier si le siège est déjà acheté par un autre utilisateur
+            bool isPurchasedByAnotherUser = alreadyPurchasedSeats.contains(seatNumber);
 
-            if (isClickable) {
-                seatButton->setStyleSheet("QPushButton {"
-                                          "background-color: #3498db;"
-                                          "color: white;"
-                                          "border: none;"
-                                          "padding: 5px 10px;"
-                                          "border-radius: 5px;"
-                                          "font-size: 14px;"
-                                          "}"
-                                          "QPushButton:hover {"
-                                          "background-color: #2980b9;"
-                                          "}");
-                connect(seatButton, &QPushButton::clicked, this, [seatNumber, this]() {
-                    onSeatClicked(seatNumber);
-                });
-            } else {
+            if (isPurchasedByAnotherUser) {
                 seatButton->setStyleSheet("QPushButton {"
                                           "background-color: #CCCCCC;"
                                           "color: white;"
@@ -60,8 +48,36 @@ void TicketDialog::setupUI(const QString& selectedShow)
                                           "padding: 5px 10px;"
                                           "border-radius: 5px;"
                                           "font-size: 14px;"
-                                          "}"
-                                          ); // Grisé
+                                          "}");
+            } else {
+                bool isClickable = (isCovid == 0) || (isCovid == 1 && seatNumber % 2 == 0);
+
+                if (isClickable) {
+                    seatButton->setStyleSheet("QPushButton {"
+                                              "background-color: #3498db;"
+                                              "color: white;"
+                                              "border: none;"
+                                              "padding: 5px 10px;"
+                                              "border-radius: 5px;"
+                                              "font-size: 14px;"
+                                              "}"
+                                              "QPushButton:hover {"
+                                              "background-color: #2980b9;"
+                                              "}");
+                    connect(seatButton, &QPushButton::clicked, this, [seatNumber, this]() {
+                        onSeatClicked(seatNumber);
+                    });
+                } else {
+                    seatButton->setStyleSheet("QPushButton {"
+                                              "background-color: #CCCCCC;"
+                                              "color: white;"
+                                              "border: none;"
+                                              "padding: 5px 10px;"
+                                              "border-radius: 5px;"
+                                              "font-size: 14px;"
+                                              "}"
+                                              ); // Grisé
+                }
             }
 
             seatButtons.push_back(seatButton);

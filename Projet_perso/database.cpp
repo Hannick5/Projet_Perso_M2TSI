@@ -113,3 +113,53 @@ int Database::getIsCovidValue(const QString &spectacleName) {
     // En cas d'erreur, vous pouvez renvoyer une valeur par défaut (par exemple, -1) pour indiquer qu'aucune information n'a été trouvée.
     return -1;
 }
+
+QList<int> Database::getAlreadyPurchasedSeats(const QString& selectedShow) {
+    QList<int> purchasedSeats;
+
+    QSqlQuery query;
+    query.prepare("SELECT num_place FROM Spectateur WHERE nom_spectacle = :spectacle");
+    query.bindValue(":spectacle", selectedShow);
+
+    if (query.exec()) {
+        while (query.next()) {
+            int seatNumber = query.value(0).toInt();
+            purchasedSeats.append(seatNumber);
+        }
+    } else {
+        qDebug() << "Erreur lors de la récupération des sièges déjà achetés : " << query.lastError().text();
+    }
+
+    return purchasedSeats;
+}
+
+// Méthode pour vérifier si un spectacle a des restrictions COVID
+bool Database::isCovidShow(const QString& selectedShow) {
+    QSqlQuery query;
+    query.prepare("SELECT covid FROM spectacles WHERE titre = :titre");
+    query.bindValue(":titre", selectedShow);
+
+    if (query.exec() && query.next()) {
+        int isCovid = query.value(0).toInt();
+        return isCovid == 1;
+    }
+
+    // Valeur par défaut si la requête échoue
+    return false;
+}
+
+// Méthode pour vérifier si toutes les places pour un spectacle donné sont déjà achetées
+bool Database::areAllSeatsPurchased(const QString& selectedShow, int totalSeats) {
+    QSqlQuery query;
+    query.prepare("SELECT COUNT(*) FROM Spectateur WHERE nom_spectacle = :spectacle");
+    query.bindValue(":spectacle", selectedShow);
+
+    if (query.exec() && query.next()) {
+        int seatsPurchased = query.value(0).toInt();
+        return seatsPurchased >= totalSeats;
+    }
+
+    // Valeur par défaut si la requête échoue
+    return false;
+}
+

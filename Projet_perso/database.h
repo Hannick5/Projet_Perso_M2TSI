@@ -18,6 +18,9 @@ public:
     QString hashPassword(const QString &password);
     bool deleteReservation(const QString& nom_utilisateur, const QString& nom_spectacle, int num_place);
     int getIsCovidValue(const QString &spectacleName);
+    QList<int> getAlreadyPurchasedSeats(const QString& selectedShow);
+    bool areAllSeatsPurchased(const QString& selectedShow, int totalSeats);
+    bool isCovidShow(const QString& selectedShow);
 private:
     QSqlDatabase db;
 };
