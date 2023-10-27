@@ -31,4 +31,8 @@ Ce guide explique comment ouvrir ce projet. Le projet est fourni sous forme de f
 4. **Édition et compilation**
 
     Une fois le projet ouvert dans Qt Creator, vous pouvez maintenant éditer le code source, les ressources et les fichiers de projet. Utilisez les fonctionnalités de Qt Creator pour modifier, compiler et exécuter le projet.
+# Utilisation de l'application
 
+Pour accéder à l'interface utilisateur utiliser l'identifiant et mot de passe suivants : "Utilisateur 1", "password1"
+
+Pour accéder à l'interface administrateur utiliser l'identifiant et mot de passe suivants : "Administrateur 1", "password6"
